@@ -143,75 +143,77 @@ return (
     <h1 className={`${playfair.className} text-5xl`}>Profile</h1>
 
     {/* ---------- PROFILE CARD ---------- */}
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl">
-          {profile.name || "Unnamed user"}
-        </CardTitle>
-        <CardDescription>{profile.email}</CardDescription>
-
-        <CardAction>
-          <Avatar>
-            <AvatarFallback
-              className={`${getAvatarColor(profile.name)} text-white font-bold`}
-            >
-              {getInitial(profile.name)}
-            </AvatarFallback>
-          </Avatar>
-        </CardAction>
-      </CardHeader>
-
-      <CardContent className="text-sm text-muted-foreground break-lines whitespace-pre-line">
-        {profile.bio || "No bio yet."}
-      </CardContent>
-
-      <CardFooter>
-        <div className="flex flex-col sm:flex-row gap-3">
-          {/* EDIT PROFILE */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline">
-                <PencilLine />
-              </Button>
-            </SheetTrigger>
-
-            <SheetContent className="p-3">
-              <SheetHeader>
-                <SheetTitle>Edit Profile</SheetTitle>
-              </SheetHeader>
-
-              <div className="mt-4 space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Name</label>
-                  <Input
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    placeholder="Your name"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium">Bio</label>
-                  <Textarea
-                    value={editBio}
-                    onChange={(e) => setEditBio(e.target.value)}
-                    placeholder="Tell something about yourself"
-                  />
-                </div>
-
-                <Button onClick={updateProfile} disabled={saving}>
-                  {saving ? "Saving..." : "Save"}
+    <div className="w-[320px] max-w-full">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">
+            {profile.name || "Unnamed user"}
+          </CardTitle>
+          <CardDescription>{profile.email}</CardDescription>
+  
+          <CardAction>
+            <Avatar>
+              <AvatarFallback
+                className={`${getAvatarColor(profile.name)} text-white font-bold`}
+              >
+                {getInitial(profile.name)}
+              </AvatarFallback>
+            </Avatar>
+          </CardAction>
+        </CardHeader>
+  
+        <CardContent className="text-sm text-muted-foreground break-lines whitespace-pre-line">
+          {profile.bio || "No bio yet."}
+        </CardContent>
+  
+        <CardFooter>
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* EDIT PROFILE */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline">
+                  <PencilLine />
                 </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
-
-          <Button variant="destructive" onClick={signOut}>
-            Sign Out
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+              </SheetTrigger>
+  
+              <SheetContent className="p-3">
+                <SheetHeader>
+                  <SheetTitle>Edit Profile</SheetTitle>
+                </SheetHeader>
+  
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">Name</label>
+                    <Input
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      placeholder="Your name"
+                    />
+                  </div>
+  
+                  <div>
+                    <label className="text-sm font-medium">Bio</label>
+                    <Textarea
+                      value={editBio}
+                      onChange={(e) => setEditBio(e.target.value)}
+                      placeholder="Tell something about yourself"
+                    />
+                  </div>
+  
+                  <Button onClick={updateProfile} disabled={saving}>
+                    {saving ? "Saving..." : "Save"}
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+  
+            <Button variant="destructive" onClick={signOut}>
+              Sign Out
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
 
     {/* ---------- MY POSTS ---------- */}
     <section className="space-y-4">
