@@ -1,12 +1,5 @@
 
-import {
-  Home,
-  User,
-  Compass,
-  Newspaper,
-  Plus
-} from "lucide-react"
-
+import { Home, User, Compass, Newspaper, Plus, } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -18,34 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "/home",
-    icon: Home,
-  },
-  {
-    title: "Add",
-    url: "/add",
-    icon: Plus,
-  },
-  {
-    title: "Profile",
-    url: "/profile",
-    icon: User,
-  },
-  {
-    title: "Explore",
-    url: "/explore",
-    icon: Compass,
-  },
-  {
-    title: "Feed",
-    url: "/feed",
-    icon: Newspaper,
-  },
-]
+const items = [ { title: "Home", url: "/home", icon: Home }, { title: "Add", url: "/add", icon: Plus }, { title: "Profile", url: "/profile", icon: User }, { title: "Explore", url: "/explore", icon: Compass }, { title: "Feed", url: "/feed", icon: Newspaper }, ]
 
 export function AppSidebar() {
   return (

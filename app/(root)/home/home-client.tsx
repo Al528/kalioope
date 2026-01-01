@@ -16,6 +16,7 @@ import {
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { getInitial, getAvatarColor } from "@/lib/utils"
+import { playfair } from "@/fonts"
 
 const HomeClient = () => {
   const [post, setPost] = useState<LatestPost | null>(null)
@@ -37,7 +38,7 @@ const HomeClient = () => {
   return (
     <Card className="m-3 w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-2xl">{post.title}</CardTitle>
+        <CardTitle className={`${playfair.className} text-2xl`}>{post.title}</CardTitle>
         <CardDescription>by {post.author?.name}</CardDescription>
 
         <CardAction>

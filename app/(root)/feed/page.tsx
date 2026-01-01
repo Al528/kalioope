@@ -40,7 +40,7 @@ const Page = () => {
         {posts.map((post) => (
           <Card key={post.id}>
             <CardHeader>
-              <CardTitle>{post.title}</CardTitle>
+              <CardTitle className={`${playfair.className} text-2xl`}>{post.title}</CardTitle>
               <CardDescription>
                 by {post.author?.name ?? "Unknown"}
               </CardDescription>
@@ -61,7 +61,7 @@ const Page = () => {
             </CardContent>
   
             <CardFooter className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {new Date(post.created_at).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "short",

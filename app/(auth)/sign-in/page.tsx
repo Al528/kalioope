@@ -53,7 +53,7 @@ const signInWithGithub = async () => {
   return (
     <div>
       <FieldSet className="w-80">
-        <FieldLegend className={`${playfair.className}`}>Sign in to Kalioope</FieldLegend>
+        <FieldLegend>Sign in to Kalioope</FieldLegend>
         <FieldDescription>Fill in the field below to sign in.</FieldDescription>
         <FieldGroup>
           <Field>

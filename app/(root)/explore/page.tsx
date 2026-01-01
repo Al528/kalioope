@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { playfair } from "@/fonts"
 
 const Page = () => {
   const [query, setQuery] = useState("")
@@ -57,7 +58,7 @@ const Page = () => {
         {results.map((post) => (
           <Card key={post.id}>
             <CardHeader>
-              <CardTitle>{post.title}</CardTitle>
+              <CardTitle className={`${playfair.className} text-2xl`}>{post.title}</CardTitle>
               <CardDescription>
                 by {post.author?.name ?? "Unknown"}
               </CardDescription>

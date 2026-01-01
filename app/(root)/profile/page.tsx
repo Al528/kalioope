@@ -163,7 +163,7 @@ return (
           </CardAction>
         </CardHeader>
   
-        <CardContent className="text-sm text-muted-foreground break-lines whitespace-pre-line">
+        <CardContent className="text-base text-muted-foreground break-lines whitespace-pre-line">
           {profile.bio || "No bio yet."}
         </CardContent>
   
@@ -184,7 +184,7 @@ return (
   
                 <div className="mt-4 space-y-4">
                   <div>
-                    <label className="text-sm font-medium">Name</label>
+                    <label className="text-base font-medium">Name</label>
                     <Input
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
@@ -193,7 +193,7 @@ return (
                   </div>
   
                   <div>
-                    <label className="text-sm font-medium">Bio</label>
+                    <label className="text-base font-medium">Bio</label>
                     <Textarea
                       value={editBio}
                       onChange={(e) => setEditBio(e.target.value)}

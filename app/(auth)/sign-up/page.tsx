@@ -73,7 +73,7 @@ const Page = () => {
   return (
     <div>
       <FieldSet className="w-80">
-        <FieldLegend className={playfair.className}>
+        <FieldLegend>
           Sign up to Kalioope
         </FieldLegend>
         <FieldDescription>
