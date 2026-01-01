@@ -26,9 +26,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useRouter } from "next/navigation"
-import { PencilLine } from "lucide-react"
+import { PencilLine, LogOut } from "lucide-react"
 import { useAuth } from "@/app/context/context"
 import { getMyPosts } from "@/lib/posts"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 
 type Profile = {
@@ -206,9 +207,9 @@ return (
                 </div>
               </SheetContent>
             </Sheet>
-  
+            <ThemeToggle />
             <Button variant="destructive" onClick={signOut}>
-              Sign Out
+              <LogOut />
             </Button>
           </div>
         </CardFooter>

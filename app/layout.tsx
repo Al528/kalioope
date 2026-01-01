@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "./context/context";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import { inter } from "@/fonts";
 import "./globals.css";
@@ -16,13 +17,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.className} antialiased`}
       >
         <AuthProvider>
-          {children}
-          <Toaster richColors />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster richColors />
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
