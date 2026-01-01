@@ -11,12 +11,13 @@ import {
 } from "@/components/ui/card"
 
 import { useEffect, useState } from "react"
-import { getFeedPosts } from "@/lib/posts"
+import { getFeedPosts, LatestPost } from "@/lib/posts"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { getAvatarColor, getInitial } from "@/lib/utils"
+import { LikeButton } from "@/components/like-button"
 
 const Page = () => {
-  const [posts, setPosts] = useState<any[]>([])
+  const [posts, setPosts] = useState<LatestPost[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -37,7 +38,10 @@ const Page = () => {
         <Card key={post.id}>
           <CardHeader>
             <CardTitle>{post.title}</CardTitle>
-            <CardDescription>by {post.author?.name}</CardDescription>
+            <CardDescription>
+              by {post.author?.name ?? "Unknown"}
+            </CardDescription>
+
             <CardAction>
               <Avatar>
                 <AvatarFallback
@@ -48,8 +52,12 @@ const Page = () => {
               </Avatar>
             </CardAction>
           </CardHeader>
-          <CardContent className="break-words whitespace-pre-wrap lg:max-h-40 lg:overflow-y-auto">{post.content}</CardContent>
-          <CardFooter>
+
+          <CardContent className="break-words whitespace-pre-wrap lg:max-h-40 lg:overflow-y-auto">
+            {post.content}
+          </CardContent>
+
+          <CardFooter className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               {new Date(post.created_at).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -57,6 +65,12 @@ const Page = () => {
                 day: "numeric",
               })}
             </p>
+
+            <LikeButton
+              postId={post.id}
+              initialLiked={(post.user_like?.length ?? 0) > 0}
+              initialCount={post.likes?.[0]?.count ?? 0}
+            />
           </CardFooter>
         </Card>
       ))}

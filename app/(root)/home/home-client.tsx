@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { getLatestPost, LatestPost } from "@/lib/posts"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { LikeButton } from "@/components/like-button"
 
 import {
   Card,
@@ -13,8 +13,9 @@ import {
   CardFooter,
   CardAction,
 } from "@/components/ui/card"
-import { getInitial, getAvatarColor } from "@/lib/utils"
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { getInitial, getAvatarColor } from "@/lib/utils"
 
 const HomeClient = () => {
   const [post, setPost] = useState<LatestPost | null>(null)
@@ -22,36 +23,23 @@ const HomeClient = () => {
 
   useEffect(() => {
     const fetchPost = async () => {
-      try {
-        const data = await getLatestPost()
-        console.log("LATEST POST:", data)
-        console.log("AUTHOR FIELD:", data?.author)
-
-        setPost(data)
-      } catch (err) {
-        console.error("FETCH FAILED:", err)
-      } finally {
-        setLoading(false)
-      }
+      const data = await getLatestPost()
+      setPost(data)
+      setLoading(false)
     }
 
     fetchPost()
   }, [])
 
-  if (loading) return <div>Loading...</div>
-  if (!post) return <div>No posts yet</div>
+  if (loading) return <p>Loading...</p>
+  if (!post) return <p>No posts yet</p>
 
   return (
-    <Card className="h-1/2 m-3 w-60 max-w-2xl mx-w-auto">
+    <Card className="m-3 w-full max-w-md">
       <CardHeader>
         <CardTitle className="text-2xl">{post.title}</CardTitle>
-        <CardDescription>
-          {post.author?.name && (
-            <p>
-              by {post.author.name}
-            </p>
-          )}
-        </CardDescription>
+        <CardDescription>by {post.author?.name}</CardDescription>
+
         <CardAction>
           <Avatar>
             <AvatarFallback
@@ -62,10 +50,12 @@ const HomeClient = () => {
           </Avatar>
         </CardAction>
       </CardHeader>
-      <CardContent>
-        <p className="break-words whitespace-pre-wrap">“{post.content}”</p>
+
+      <CardContent className="break-words whitespace-pre-wrap">
+        “{post.content}”
       </CardContent>
-      <CardFooter>
+
+      <CardFooter className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           {new Date(post.created_at).toLocaleDateString("en-US", {
             year: "numeric",
@@ -73,9 +63,16 @@ const HomeClient = () => {
             day: "numeric",
           })}
         </p>
+
+        <LikeButton
+          postId={post.id}
+          initialLiked={post.user_like.length > 0}
+          initialCount={post.likes[0]?.count ?? 0}
+        />
       </CardFooter>
     </Card>
   )
 }
 
 export default HomeClient
+

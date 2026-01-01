@@ -14,7 +14,8 @@ const getUser = async () => {
   return user
 }
 
-export type LatestPost = {
+/* ------------------ TYPES ------------------ */
+export type BasePost = {
   id: string
   title: string
   content: string | null
@@ -24,10 +25,21 @@ export type LatestPost = {
   } | null
 }
 
+export type LatestPost = BasePost & {
+  likes: { count: number }[]
+  user_like: { user_id: string }[]
+}
 
+/* ------------------ HELPERS ------------------ */
+const normalizeAuthor = (author: any) =>
+  Array.isArray(author) ? author[0] ?? null : author ?? null
 
-/* ------------------ READ ------------------ */
+/* ------------------ READ (LATEST POST) ------------------ */
 export const getLatestPost = async (): Promise<LatestPost | null> => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   const { data, error } = await supabase
     .from("posts")
     .select(`
@@ -37,8 +49,11 @@ export const getLatestPost = async (): Promise<LatestPost | null> => {
       created_at,
       author:users (
         name
-      )
+      ),
+      likes:likes(count),
+      user_like:likes!left(user_id)
     `)
+    .eq("user_like.user_id", user?.id ?? "")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle()
@@ -46,17 +61,49 @@ export const getLatestPost = async (): Promise<LatestPost | null> => {
   if (error) throw error
   if (!data) return null
 
-  // 🔧 normalize author (array OR object → object)
-  const author =
-    Array.isArray(data.author) ? data.author[0] ?? null : data.author ?? null
-
   return {
     ...data,
-    author,
+    author: normalizeAuthor(data.author),
+    likes: data.likes ?? [],
+    user_like: data.user_like ?? [],
   }
 }
 
-export const getMyPosts = async (userId: string) => {
+/* ------------------ FEED ------------------ */
+export const getFeedPosts = async (): Promise<LatestPost[]> => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`
+      id,
+      title,
+      content,
+      created_at,
+      author:users (
+        name
+      ),
+      likes:likes(count),
+      user_like:likes!left(user_id)
+    `)
+    .eq("user_like.user_id", user?.id ?? "")
+    .order("created_at", { ascending: false })
+
+  if (error) throw error
+  if (!data) return []
+
+  return data.map((post) => ({
+    ...post,
+    author: normalizeAuthor(post.author),
+    likes: post.likes ?? [],
+    user_like: post.user_like ?? [],
+  }))
+}
+
+/* ------------------ MY POSTS (NO LIKES) ------------------ */
+export const getMyPosts = async (userId: string): Promise<BasePost[]> => {
   const { data, error } = await supabase
     .from("posts")
     .select(`
@@ -76,43 +123,14 @@ export const getMyPosts = async (userId: string) => {
 
   return data.map((post) => ({
     ...post,
-    author: Array.isArray(post.author)
-      ? post.author[0] ?? null
-      : post.author ?? null,
+    author: normalizeAuthor(post.author),
   }))
 }
 
-
-/* ------------------ FEED ------------------ */
-export const getFeedPosts = async (): Promise<LatestPost[]> => {
-  const { data, error } = await supabase
-    .from("posts")
-    .select(`
-      id,
-      title,
-      content,
-      created_at,
-      author:users (
-        name
-      )
-    `)
-    .order("created_at", { ascending: false })
-
-  if (error) throw error
-  if (!data) return []
-
-  return data.map((post) => ({
-    ...post,
-    author: Array.isArray(post.author)
-      ? post.author[0] ?? null
-      : post.author ?? null,
-  }))
-}
-
-/* ------------------ EXPLORE (SEARCH) ------------------ */
+/* ------------------ SEARCH ------------------ */
 export const searchPosts = async (
   query: string
-): Promise<LatestPost[]> => {
+): Promise<BasePost[]> => {
   if (!query) return []
 
   const { data, error } = await supabase
@@ -126,9 +144,7 @@ export const searchPosts = async (
         name
       )
     `)
-    .or(
-      `title.ilike.%${query}%,content.ilike.%${query}%`
-    )
+    .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
     .order("created_at", { ascending: false })
     .limit(50)
 
@@ -137,12 +153,9 @@ export const searchPosts = async (
 
   return data.map((post) => ({
     ...post,
-    author: Array.isArray(post.author)
-      ? post.author[0] ?? null
-      : post.author ?? null,
+    author: normalizeAuthor(post.author),
   }))
 }
-
 
 /* ------------------ CREATE ------------------ */
 export const createPost = async (title: string, content: string) => {
@@ -163,7 +176,7 @@ export const updatePost = async (
   title: string,
   content: string
 ) => {
-  await getUser() // ensures auth exists
+  await getUser()
 
   const { error } = await supabase
     .from("posts")
