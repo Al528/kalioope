@@ -17,46 +17,41 @@ export function LikeButton({
   initialCount,
 }: LikeButtonProps) {
   const [liked, setLiked] = useState(initialLiked)
-  const [count, setCount] = useState(initialCount)
+  const [count, setCount] = useState(Number(initialCount) || 0)
   const [loading, setLoading] = useState(false)
 
   const toggleLike = async () => {
     if (loading) return
     setLoading(true)
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      setLoading(false)
-      return
-    }
-
-    if (liked) {
-      const { error } = await supabase
-        .from("likes")
-        .delete()
-        .eq("post_id", postId)
-        .eq("user_id", user.id)
-
-      if (!error) {
+  
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+  
+      if (!user) return
+  
+      if (liked) {
+        await supabase
+          .from("likes")
+          .delete()
+          .eq("post_id", postId)
+          .eq("user_id", user.id)
+  
         setLiked(false)
         setCount((c) => c - 1)
-      }
-    } else {
-      const { error } = await supabase.from("likes").insert({
-        post_id: postId,
-        user_id: user.id,
-      })
-
-      if (!error) {
+      } else {
+        await supabase.from("likes").insert({
+          post_id: postId,
+          user_id: user.id,
+        })
+  
         setLiked(true)
         setCount((c) => c + 1)
       }
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   return (
@@ -72,7 +67,7 @@ export function LikeButton({
           liked ? "fill-red-500 text-red-500 scale-110" : ""
         }`}
       />
-      <span>{count}</span>
+      <span>{Number.isFinite(count) ? count : 0}</span>
     </Button>
   )
 }

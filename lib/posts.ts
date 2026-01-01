@@ -126,12 +126,15 @@ export const getMyPosts = async (userId: string): Promise<BasePost[]> => {
     author: normalizeAuthor(post.author),
   }))
 }
-
-/* ------------------ SEARCH ------------------ */
+/* ------------------ EXPLORE (SEARCH WITH LIKES) ------------------ */
 export const searchPosts = async (
   query: string
-): Promise<BasePost[]> => {
+): Promise<LatestPost[]> => {
   if (!query) return []
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   const { data, error } = await supabase
     .from("posts")
@@ -142,8 +145,11 @@ export const searchPosts = async (
       created_at,
       author:users (
         name
-      )
+      ),
+      likes:likes(count),
+      user_like:likes!left(user_id)
     `)
+    .eq("user_like.user_id", user?.id ?? "")
     .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
     .order("created_at", { ascending: false })
     .limit(50)
@@ -153,11 +159,14 @@ export const searchPosts = async (
 
   return data.map((post) => ({
     ...post,
-    author: normalizeAuthor(post.author),
+    author: Array.isArray(post.author)
+      ? post.author[0] ?? null
+      : post.author ?? null,
+    likes: post.likes ?? [],
+    user_like: post.user_like ?? [],
   }))
 }
 
-/* ------------------ CREATE ------------------ */
 export const createPost = async (title: string, content: string) => {
   const user = await getUser()
 
